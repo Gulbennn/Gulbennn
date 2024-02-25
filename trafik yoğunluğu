@@ -1,0 +1,40 @@
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap stil dosyasını ekliyoruz
+
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Ilce from './pages/Ilce';
+
+const App = () => {
+  const [trafficData, setTrafficData] = useState(null);
+
+  useEffect(() => {
+    // Örnek trafik verisi alımı - Bursa'nın genel trafiği simüle ediliyor
+    const getTrafficData = async () => {
+      try {
+        const response = await axios.get('https://example-traffic-api.com/bursa/general');
+        setTrafficData(response.data);
+      } catch (error) {
+        console.error('Error fetching traffic data:', error);
+      }
+    };
+
+    getTrafficData();
+  }, []);
+
+  return (
+    <Router>
+      <Navbar />
+      <div className="container mt-4"> 
+        <Switch>
+          <Route path="/" exact render={() => <Home trafficData={trafficData} />} />
+          <Route path="/ilce/:ilceName" render={(props) => <Ilce {...props} trafficData={trafficData} />} />
+        </Switch>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
